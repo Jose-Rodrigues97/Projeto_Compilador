@@ -1,0 +1,37 @@
+import java_cup.runtime.*;
+
+parser code {:
+    public static void main(String args[])throws Exception{
+        //new parser(new Yylex (new FileInputStream(args[0]))).parse;
+        new parser(new Yylex(System.in)).parse();
+    }
+    public void systax_error(symbol sym){
+        report_error("Error de sintaxis. Linha " + (sym.right + 1) + "Coluna: " + sym.left +  (sym.value + "\"", null));
+        //public static void carregar(String arquivo) throws Exception{
+        //    new parser(new Yylex(new FileInputStream(arquivo))).parse();
+        }
+:}
+
+init with {: :};
+scan with {: return scanner.next_token(); :};
+
+//TERMINAIS
+terminal type_int, type_char, type_float;
+terminal virgula, ponto_virgula;
+terminal id;
+
+//NÃO TERMINAIS
+non terminal PROGRAM, VARIABLE, DECL_VARIABLE, DATA_TYPE, SYMBOL, LIST;
+
+start with PROGRAM;
+
+//REGRAS DE PRODUÇÃO
+PROGRAM ::= DECL_VARIABLE;                          {: System.out.println(decl_variable);               :}
+DECL_VARIABLE ::= DATA_TYPE VARIABLE SYMBOL;        {: System.out.println(data_type variable symbol);   :}
+LIST ::= VARIABLE SYMBOL;                           {: System.out.println(variable);                    :}
+DATA_TYPE ::= type_int                              {: RESULT = TYPE_INT                                :}
+            | type_char                             {: RESULT = TYPE_CHAR                               :}
+            | type_float;                           {: RESULT = TYPE_FLOAT                              :}
+SYMBOL ::= virgula LIST                             {: simbolos.put(ID.toString(), list)                :}
+        | ponto_virgula;                            {: RESULT = PONTO_VIRGULA                           :}
+variable ::= id;                                    {: simbolos.put(ID.toString())                      :}
